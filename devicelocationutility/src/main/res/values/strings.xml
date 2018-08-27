@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Device Location Utility</string>
+
+    <string name="deviceLocationUtil_default_rationale_request_title">Location Permission Required</string>
+    <string name="deviceLocationUtil_default_rationale_request_messageBody">
+        This app requires location permissions in order to provide location-aware functionality.
+        If the permission is not granted any features that rely on such functionality may not work correctly.
+    </string>
+
+    <string name="deviceLocationUtil_request_returned_null">Location request returned null</string>
+    <string name="deviceLocationUtil_requests_currently_active">Device is already receiving location updates</string>
+</resources>
