@@ -68,7 +68,7 @@ public class DeviceLocationUtility extends LocationCallback
     /**
      * Static nested class defining int constants for use with location requests
      */
-    public class RequestCodes
+    public static class RequestCodes
     {
         public static final int CURRENT_LOCATION_ONE_TIME = 0;
         public static final int CURRENT_LOCATION_UPDATES = 1;
@@ -79,7 +79,7 @@ public class DeviceLocationUtility extends LocationCallback
     /**
      * Static nested class defining int constants for use with reverse Geocoding of address data
      */
-    public class AddressCodes
+    public static class AddressCodes
     {
         public static final int ADMIN_AREA = 0;
         public static final int CITY_NAME = 1;
@@ -258,15 +258,8 @@ public class DeviceLocationUtility extends LocationCallback
      */
     @SuppressLint("MissingPermission")
     public void getCurrentLocationOneTime(final DeviceLocationCallback callback){
-        // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
-        final Activity activity = weakActivity.get();
-        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
-            // Activity is no longer valid, don't do anything
-            return;
-        }
-
         if (mIsReceivingUpdates){
-            callback.onFailedRequest(activity.getString(R.string.deviceLocationUtil_requests_currently_active));
+            callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_requests_currently_active));
             return;
         }
 
@@ -280,7 +273,7 @@ public class DeviceLocationUtility extends LocationCallback
                     // Stop location updates now that we have a location result
                     stopLocationUpdates();
                 } else {
-                    callback.onFailedRequest(activity.getString(R.string.deviceLocationUtil_request_returned_null));
+                    callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_request_returned_null));
                     // Stop location updates on null result
                     stopLocationUpdates();
                 }
@@ -313,15 +306,8 @@ public class DeviceLocationUtility extends LocationCallback
      */
     @SuppressLint("MissingPermission")
     public void getCurrentLocationUpdates(final DeviceLocationCallback callback){
-        // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
-        final Activity activity = weakActivity.get();
-        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
-            // Activity is no longer valid, don't do anything
-            return;
-        }
-
         if (mIsReceivingUpdates){
-            callback.onFailedRequest(activity.getString(R.string.deviceLocationUtil_requests_currently_active));
+            callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_requests_currently_active));
             return;
         }
 
@@ -333,7 +319,7 @@ public class DeviceLocationUtility extends LocationCallback
                 if (locationResult != null){
                     callback.onLocationResult(locationResult.getLastLocation());
                 } else {
-                    callback.onFailedRequest(activity.getString(R.string.deviceLocationUtil_request_returned_null));
+                    callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_request_returned_null));
                 }
             }
         };
@@ -365,7 +351,7 @@ public class DeviceLocationUtility extends LocationCallback
     @SuppressLint("MissingPermission")
     public void getSmartLocation(final DeviceLocationCallback callback){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
-        final Activity activity = weakActivity.get();
+        Activity activity = weakActivity.get();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
             // Activity is no longer valid, don't do anything
             return;
@@ -381,7 +367,8 @@ public class DeviceLocationUtility extends LocationCallback
                         if (location != null){
 
                             // Call back to the main thread with the location result
-                            Log.i(TAG,"getSmartLocation(): Location provided by mLocationClient.getLastLocation()");
+                            Log.i(TAG,"getSmartLocation(): " +
+                                    mContext.getString(R.string.deviceLocationUtil_location_provided_by_lastLocation));
                             callback.onLocationResult(location);
 
                         } else {
@@ -395,11 +382,12 @@ public class DeviceLocationUtility extends LocationCallback
                                 public void onLocationResult(LocationResult locationResult){
                                     if (locationResult != null){
                                         callback.onLocationResult(locationResult.getLastLocation());
-                                        Log.i(TAG,"getSmartLocation(): Location provided by mLocationCallback.requestLocationUpdates()");
+                                        Log.i(TAG,"getSmartLocation(): " +
+                                                mContext.getString(R.string.deviceLocationUtil_location_provided_by_locationUpdates));
                                         // Stop location updates now that we have a location result
                                         stopLocationUpdates();
                                     } else {
-                                        callback.onFailedRequest(activity.getString(R.string.deviceLocationUtil_request_returned_null));
+                                        callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_request_returned_null));
                                         // Stop location updates on null result
                                         stopLocationUpdates();
                                     }
@@ -534,7 +522,7 @@ public class DeviceLocationUtility extends LocationCallback
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Location settings are satisfied, no need to take any action
-                Log.i(TAG, "Location settings satisfied");
+                Log.i(TAG, mContext.getString(R.string.deviceLocationUtil_location_settings_satisfied));
             }
         });
         task.addOnFailureListener(activity, new OnFailureListener() {
@@ -543,7 +531,7 @@ public class DeviceLocationUtility extends LocationCallback
                 if (e instanceof ResolvableApiException){
                     // Location settings are not satisfied, display a dialog to the user
                     // requesting the settings to be enabled
-                    Log.e(TAG, "Location settings not satisfied. Attempting to resolve...");
+                    Log.e(TAG, mContext.getString(R.string.deviceLocationUtil_location_settings_not_satisfied));
                     try{
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         // Show the dialog
@@ -593,7 +581,7 @@ public class DeviceLocationUtility extends LocationCallback
         if (mLocationCallback != null && mIsReceivingUpdates) {
             mLocationClient.removeLocationUpdates(mLocationCallback);
             mIsReceivingUpdates = false;
-            Log.i(TAG, "Location updates removed");
+            Log.i(TAG, mContext.getString(R.string.deviceLocationUtil_location_updates_removed));
         }
 
     }
@@ -613,7 +601,7 @@ public class DeviceLocationUtility extends LocationCallback
         if (mLocationCallback != null && !mIsReceivingUpdates) {
             mLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
             mIsReceivingUpdates = true;
-            Log.i(TAG, "Location updates resumed");
+            Log.i(TAG, mContext.getString(R.string.deviceLocationUtil_location_updates_resumed));
         }
 
     }
@@ -665,17 +653,17 @@ public class DeviceLocationUtility extends LocationCallback
 
         } catch (IOException e) {
             // Catch network or other IO problems
-            callback.onAddressFailedResult("Geocoder not available");
+            callback.onAddressFailedResult(mContext.getString(R.string.deviceLocationUtil_geocoder_not_available));
             return;
         } catch (IllegalArgumentException e) {
             // Catch invalid latitude or longitude values
-            callback.onAddressFailedResult("Invalid latitude or longitude");
+            callback.onAddressFailedResult(mContext.getString(R.string.deviceLocationUtil_geocoder_invalid_latLong));
             return;
         }
 
         // Handle case where no address is found
         if (addressList == null || addressList.size() == 0) {
-            callback.onAddressFailedResult("No address found");
+            callback.onAddressFailedResult(mContext.getString(R.string.deviceLocationUtil_geocoder_address_not_found));
         } else {
             // Return the address list
             callback.onAddressSuccessfulResult(addressList);
@@ -709,15 +697,15 @@ public class DeviceLocationUtility extends LocationCallback
 
         } catch (IOException e) {
             // Catch network or other IO problems
-            return "Geocoder not available. Check network connection.";
+            return mContext.getString(R.string.deviceLocationUtil_geocoder_not_available);
         } catch (IllegalArgumentException e) {
             // Catch invalid latitude or longitude values
-            return "Invalid latitude or longitude";
+            return mContext.getString(R.string.deviceLocationUtil_geocoder_invalid_latLong);
         }
 
         // Handle case where no address is found
         if (addressList == null || addressList.size() == 0){
-            return "Sorry, no address found for this location";
+            return mContext.getString(R.string.deviceLocationUtil_geocoder_address_not_found);
         } else {
             // Create the Address object from the address list
             address = addressList.get(0);
@@ -763,7 +751,7 @@ public class DeviceLocationUtility extends LocationCallback
                 elementString = address.getSubThoroughfare();
                 break;
             default:
-                elementString = "Invalid element code";
+                elementString = mContext.getString(R.string.deviceLocationUtil_geocoder_invalid_element);
                 break;
         }
 
