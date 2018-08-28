@@ -74,7 +74,6 @@ public class DeviceLocationUtility extends LocationCallback
         public static final int CURRENT_LOCATION_UPDATES = 1;
         public static final int LAST_KNOWN_LOCATION = 2;
         public static final int SMART_LOCATION = 3;
-        public static final int DEVICE_SETTINGS_REQUEST = 4;
     }
 
     /**
@@ -115,8 +114,8 @@ public class DeviceLocationUtility extends LocationCallback
             this.weakActivity = new WeakReference<>(activity);
 
             // Set the default title and message for the dialog
-            mTitle = getString(R.string.deviceLocationUtil_default_rationale_request_title);
-            mMessage = getString(R.string.deviceLocationUtil_default_rationale_request_messageBody);
+            mTitle = activity.getString(R.string.deviceLocationUtil_default_rationale_request_title);
+            mMessage = activity.getString(R.string.deviceLocationUtil_default_rationale_request_messageBody);
         }
 
 
@@ -237,11 +236,12 @@ public class DeviceLocationUtility extends LocationCallback
                             callback.onLocationResult(location);
                         } else {
                             // Call back to the main thread to advise of a null result
-                            callback.onFailedRequest(activity.getString(R.string.deviceLocationUtil_request_returned_null));
+                            callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_request_returned_null));
                         }
 
                     }
                 });
+
     }
 
 
@@ -269,23 +269,26 @@ public class DeviceLocationUtility extends LocationCallback
         {
             @Override
             public void onLocationResult(LocationResult locationResult){
+
+                // Update the request state flags
+                mHasReceivedLocationUpdates = true;
+                mIsReceivingUpdates = true;
+
                 if (locationResult != null){
                     callback.onLocationResult(locationResult.getLastLocation());
-                    // Stop location updates now that we have a location result
-                    stopLocationUpdates();
                 } else {
                     callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_request_returned_null));
-                    // Stop location updates on null result
-                    stopLocationUpdates();
                 }
+
+                // Stop location updates on result (even if null)
+                stopLocationUpdates();
+
             }
         };
 
         // Start the request
         mLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-        // Update the request state flags
-        mHasReceivedLocationUpdates = true;
-        mIsReceivingUpdates = true;
+
     }
 
 
@@ -317,19 +320,24 @@ public class DeviceLocationUtility extends LocationCallback
         {
             @Override
             public void onLocationResult(LocationResult locationResult){
+
+                // Update the request state flags
+                mHasReceivedLocationUpdates = true;
+                mIsReceivingUpdates = true;
+
                 if (locationResult != null){
                     callback.onLocationResult(locationResult.getLastLocation());
                 } else {
                     callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_request_returned_null));
                 }
+
             }
+
         };
 
         // Start the request
         mLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-        // Update the request state flags
-        mHasReceivedLocationUpdates = true;
-        mIsReceivingUpdates = true;
+
     }
 
 
@@ -381,6 +389,11 @@ public class DeviceLocationUtility extends LocationCallback
                             {
                                 @Override
                                 public void onLocationResult(LocationResult locationResult){
+
+                                    // Update the request state flags
+                                    mHasReceivedLocationUpdates = true;
+                                    mIsReceivingUpdates = true;
+
                                     if (locationResult != null){
                                         callback.onLocationResult(locationResult.getLastLocation());
                                         Log.i(TAG,"getSmartLocation(): " +
@@ -392,14 +405,14 @@ public class DeviceLocationUtility extends LocationCallback
                                         // Stop location updates on null result
                                         stopLocationUpdates();
                                     }
+
                                 }
+
                             };
 
                             // Start the request
                             mLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-                            // Update the request state flags
-                            mHasReceivedLocationUpdates = true;
-                            mIsReceivingUpdates = true;
+
                         }
 
                     }
@@ -499,8 +512,12 @@ public class DeviceLocationUtility extends LocationCallback
      * If the settings are not satisfied a dialog requesting the user enable the required
      * settings will be displayed. The result of the request can be checked in
      * onActivityResult() in the calling Activity if necessary.
+     *
+     * @param   requestCode A package-defined int constant to identify the request.
+     *                      It is returned to the onActivityResult callback which
+     *                      must be implemented by the caller.
      */
-    public void checkDeviceSettings(){
+    public void checkDeviceSettings(final int requestCode){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
         final Activity activity = weakActivity.get();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -522,7 +539,7 @@ public class DeviceLocationUtility extends LocationCallback
         task.addOnSuccessListener(activity, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // Location settings are satisfied, no need to take any action
+                // Location settings are satisfied, no need for further action
                 Log.i(TAG, mContext.getString(R.string.deviceLocationUtil_location_settings_satisfied));
             }
         });
@@ -536,7 +553,7 @@ public class DeviceLocationUtility extends LocationCallback
                     try{
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         // Show the dialog
-                        resolvable.startResolutionForResult(activity, RequestCodes.DEVICE_SETTINGS_REQUEST);
+                        resolvable.startResolutionForResult(activity, requestCode);
                     } catch (IntentSender.SendIntentException sendException){
                         // Ignore the error.
                     }

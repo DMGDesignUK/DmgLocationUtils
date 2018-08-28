@@ -36,6 +36,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // Assign a new instance of DeviceLocationUtility to our member variable
         locationUtility = new DeviceLocationUtility(this);
 
+        // Call the example methods. Check the logs for output.
+        getLastLocation();
+        //getLocationUpdates();
+
     }
 
 
@@ -55,8 +59,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // Permission is already granted. First, we'll check the required device location settings
             // are satisfied. If they are not the user will automatically be prompted to enable them.
             // The result of this can be checked and handled by implementing and overriding the
-            // onActivityResult callback in your calling Activity.
-            locationUtility.checkDeviceSettings();
+            // onActivityResult callback in your calling Activity. The request code we're passing in
+            // can be tested for in onActivityResult to determine where the request originated.
+            locationUtility.checkDeviceSettings(DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
 
             // Now we can request the last known location from the device's cache.
             locationUtility.getLastKnownLocation(new DeviceLocationCallback() {
@@ -66,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     // Location result successfully received. This should never be null as a null
                     // result will be returned via the onFailedRequest callback method instead.
                     Log.i(TAG, "Device's last known location: " + location.toString());
-                    // Do UI stuff if necessary.
+                    // Do UI and/or other stuff if necessary.
 
                 }
                 @Override
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                     // Location request failed, log an error to the console.
                     Log.e(TAG, "Unable to get location: " + result);
-                    // Do UI stuff if necessary.
+                    // Do UI and/or other stuff if necessary.
 
                 }
             });
@@ -106,15 +111,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         // OPTIONAL: Use the setLocationRequestParams() method to change the default location
         //           request values. Here we're setting up the location request with a target update
-        //           interval of 20 seconds and a fastest update interval cap of 10 seconds using the
+        //           interval of 10 seconds and a fastest update interval cap of 5 seconds using the
         //           high accuracy power priority.
-        locationUtility.setLocationRequestParams(20000, 10000, LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationUtility.setLocationRequestParams(10000, 5000, LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         // Check the permissions
         if (locationUtility.permissionIsGranted()){
 
             // Check device settings
-            locationUtility.checkDeviceSettings();
+            locationUtility.checkDeviceSettings(DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
 
             // Request location updates
             locationUtility.getCurrentLocationUpdates(new DeviceLocationCallback() {
@@ -198,11 +203,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * This callback method needs to be implemented and overridden in order to receive and handle for
      * the results of any request to change device settings.
      *
-     * @param requestCode   When a settings request is made a requset code is passed along to the
-     *                      onActivityResult callback which can then be tested for if
-     *                      required. Note that only settings request made by the DeviceLocationUtility is a
-     *                      request to change device location settings. Therefore you should check for the
-     *                      requestCode being equal to DeviceLocationUtility.RequestCodes.DEVICE_SETTINGS_REQUEST.
+     * @param requestCode   When a settings change request is made a requset code is passed along to the
+     *                      onActivityResult callback which can then be tested for if required to
+     *                      determine which request you are responding to.
      * @param resultCode    An int value representing the result of the request. For the DeviceLocationUtility
      *                      this will always be either RESULT_OK or RESULT_CANCELED.
      * @param data          An Intent object containing any returned data from the calling Activity. For the
@@ -212,14 +215,32 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == DeviceLocationUtility.RequestCodes.DEVICE_SETTINGS_REQUEST
-                && resultCode != RESULT_OK){
+        if (resultCode != RESULT_OK) {
 
             // The user has either denied or cancelled out of the request to change device
-            // settings so you will need to handle for that here. Note that if the user accepts
-            // the request there is no need to do anything as the method that made the request
-            // will continue to run as normal.
+            // settings so you will need to handle for that here.
             Log.e(TAG, "Unable to proceed: required device settings not satisfied");
+
+        } else {
+
+            // Location settings have been enabled, query the incoming request code to determine
+            // which request we're responding to and take the appropriate action.
+            switch (requestCode){
+
+                case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
+                    // Carry on where we left off...
+                    getLastLocation();
+                    break;
+
+                case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
+                    // Carry on where we left off...
+                    getLocationUpdates();
+                    break;
+
+                default:
+                    break;
+
+            }
 
         }
 
@@ -227,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     /**
-     * It's generally a good idea to stop receiving location updates when the Activity goes into a
+     * It is generally a good idea to stop receiving location updates when the Activity goes into a
      * paused state (unless your app specifically requires background location updates)
      */
     @Override
