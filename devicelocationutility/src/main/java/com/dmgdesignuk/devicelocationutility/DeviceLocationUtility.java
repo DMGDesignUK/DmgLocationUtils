@@ -74,6 +74,7 @@ public class DeviceLocationUtility extends LocationCallback
         public static final int CURRENT_LOCATION_UPDATES = 1;
         public static final int LAST_KNOWN_LOCATION = 2;
         public static final int SMART_LOCATION = 3;
+        public static final int DEVICE_SETTINGS_REQUEST = 4;
     }
 
     /**
@@ -200,8 +201,8 @@ public class DeviceLocationUtility extends LocationCallback
         // call to setLocationRequestParams)
         this.mLocationRequest = new LocationRequest();
         setLocationRequestParams(30000, 10000, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        // Sets up the LocationRequest with an update interval of 30 seconds, a fastest
-        // update interval cap of 10 seconds and using balanced power accuracy priority.
+                                // Sets up the LocationRequest with an update interval of 30 seconds, a fastest
+                                // update interval cap of 10 seconds and using balanced power accuracy priority.
     }
 
 
@@ -412,7 +413,7 @@ public class DeviceLocationUtility extends LocationCallback
      *
      * @return  true if permission granted, false if not.
      */
-    public boolean checkPermissionGranted(){
+    public boolean permissionIsGranted(){
 
         int permissionState = ActivityCompat.checkSelfPermission(mContext,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -535,7 +536,7 @@ public class DeviceLocationUtility extends LocationCallback
                     try{
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         // Show the dialog
-                        resolvable.startResolutionForResult(activity, 1);
+                        resolvable.startResolutionForResult(activity, RequestCodes.DEVICE_SETTINGS_REQUEST);
                     } catch (IntentSender.SendIntentException sendException){
                         // Ignore the error.
                     }

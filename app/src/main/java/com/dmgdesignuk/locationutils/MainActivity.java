@@ -1,7 +1,9 @@
 package com.dmgdesignuk.locationutils;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.location.Location;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // granted the DeviceLocationUtility will automatically ask for it. You must override the
         // onRequestPermissionsResult callback method in your calling Activity in order to handle
         // the result of the request.
-        if (locationUtility.checkPermissionGranted()){
+        if (locationUtility.permissionIsGranted()){
 
             // Permission is already granted. First, we'll check the required device location settings
             // are satisfied. If they are not the user will automatically be prompted to enable them.
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * 30 seconds, with a fastest update interval cap of 10 seconds and the priority set to
      * LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY.
      *
-     * The default values will not suit all uses cases so the frequency and accuracy of the updates
+     * The default values will not suit all use cases so the frequency and accuracy of the updates
      * can be altered by calling locationUtility.setLocationRequestParams() if desired.
      *
      * See https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         locationUtility.setLocationRequestParams(20000, 10000, LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         // Check the permissions
-        if (locationUtility.checkPermissionGranted()){
+        if (locationUtility.permissionIsGranted()){
 
             // Check device settings
             locationUtility.checkDeviceSettings();
@@ -161,31 +163,63 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // Check if the permission request has been granted and store the result in a boolean
         boolean requestGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
-        // Query the incoming request code to determine which request we're responding to
-        switch (requestCode) {
+        if (requestGranted) {
+            // We've got permission, yay! Now we can carry on where we left off...
 
-            case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
-                if (requestGranted) {
-                    // We've got permission, yay! Now we can carry on where we left off...
+            // Query the incoming request code to determine which request we're responding to
+            switch (requestCode) {
+
+                case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
+                    // Carry on...
                     getLastLocation();
-                } else {
-                    // Permission denied, boo! Log our displeasure...
-                    Log.e(TAG, "You denied the permission request. You must hate us :(");
-                }
-                break;
+                    break;
 
-            case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
-                if (requestGranted) {
-                    // We've got permission, yay! Now we can carry on where we left off...
+                case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
+                    // Carry on...
                     getLocationUpdates();
-                } else {
-                    // Permission denied, boo! Log our displeasure...
-                    Log.e(TAG, "You denied the permission request. You must hate us :(");
-                }
-                break;
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+
+            }
+
+        } else {
+
+            // Permission denied, boo! Log our displeasure...
+            Log.e(TAG, "You denied the permission request. You must hate us :(");
+
+        }
+
+    }
+
+
+    /**
+     * This callback method needs to be implemented and overridden in order to receive and handle for
+     * the results of any request to change device settings.
+     *
+     * @param requestCode   When a settings request is made a requset code is passed along to the
+     *                      onActivityResult callback which can then be tested for if
+     *                      required. Note that only settings request made by the DeviceLocationUtility is a
+     *                      request to change device location settings. Therefore you should check for the
+     *                      requestCode being equal to DeviceLocationUtility.RequestCodes.DEVICE_SETTINGS_REQUEST.
+     * @param resultCode    An int value representing the result of the request. For the DeviceLocationUtility
+     *                      this will always be either RESULT_OK or RESULT_CANCELED.
+     * @param data          An Intent object containing any returned data from the calling Activity. For the
+     *                      DeviceLocationUtility this will always be null and so can be ignored.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == DeviceLocationUtility.RequestCodes.DEVICE_SETTINGS_REQUEST
+                && resultCode != RESULT_OK){
+
+            // The user has either denied or cancelled out of the request to change device
+            // settings so you will need to handle for that here. Note that if the user accepts
+            // the request there is no need to do anything as the method that made the request
+            // will continue to run as normal.
+            Log.e(TAG, "Unable to proceed: required device settings not satisfied");
 
         }
 
