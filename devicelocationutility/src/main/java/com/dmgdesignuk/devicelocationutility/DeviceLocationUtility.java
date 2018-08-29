@@ -38,26 +38,26 @@ import java.util.Locale;
 /**
  * <h1>Wraps interactions with the Google Play Services FusedLocationProviderClient</h1>
  * <p>
- * Provides an easy way to work with a device's location, including testing for and
- * requesting the necessary permission(s) as needed.
+ *     Provides an easy way to work with a device's location, including testing for and
+ *     requesting the necessary permission(s) as needed.
  * </p>
  * <p>
- * Provides several methods for retrieving the device's current or last known location.
- * Also provides methods for obtaining the address details of a given location via reverse
- * Geocoding.
+ *     Provides several methods for retrieving the device's current or last known location.
+ *     Also provides methods for obtaining the address details of a given location via reverse
+ *     Geocoding.
  * </p>
  * <p>
- * Requires <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
- * to be present in the app's Manifest.
+ *     Requires permission to access device's fine location. Make sure to add the appropriate permission
+ *     request in your app's Manifest.
  * </p>
  * <p>
- * The calling Activity should implement ActivityCompat.OnRequestPermissionsResultCallback
- * to receive and handle the result(s) of a permission request.
+ *     The calling Activity should implement <strong>ActivityCompat.OnRequestPermissionsResultCallback</strong>
+ *     to receive and handle the result(s) of a permission request.
  * </p>
  *
- * @author      Dave Gibbons <dave@dmgdesignuk.com>
- * @version     0.1.0
- * @since	    2018-08-14
+ * @author  Dave Gibbons <dave@dmgdesignuk.com>
+ * @version 0.1.0
+ * @since	2018-08-14
  *
  */
 public class DeviceLocationUtility extends LocationCallback
@@ -96,7 +96,8 @@ public class DeviceLocationUtility extends LocationCallback
     }
 
     /**
-     * Static nested class to handle displaying a dialog for use with permission checking
+     * Static nested class to handle displaying a dialog providing additional rationale to
+     * the user when requesting permission to access device location.
      */
     public static class RationaleDialogProvider extends FragmentActivity
     {
@@ -108,7 +109,19 @@ public class DeviceLocationUtility extends LocationCallback
         private String mMessage;
         private String mTitle;
 
-        /** Constructor */
+        /**
+         * Constructor.
+         *
+         * Takes a reference to the calling Activity as a parameter and assigns it to a WeakReference
+         * object in order to allow it to be properly garbage-collected if necessary.
+         *
+         * Any method that relies on the Activity attempts to re-acquire a strong reference to it,
+         * checks its state (for example not null, not finishing etc.) and exits gracefully if it
+         * is no longer available.
+         *
+         * The default dialog title and message body are assigned here but can be altered at
+         * run-time with a call to setTitle() and/or setMessage() as necessary.
+         */
         RationaleDialogProvider(Activity activity){
             // assign the activity to the weak reference
             this.weakActivity = new WeakReference<>(activity);
@@ -154,12 +167,12 @@ public class DeviceLocationUtility extends LocationCallback
 
         }
 
-        public void setMessage(String message){
-            this.mMessage = message;
-        }
-
         public void setTitle(String title){
             this.mTitle = title;
+        }
+
+        public void setMessage(String message){
+            this.mMessage = message;
         }
 
     }
@@ -181,7 +194,18 @@ public class DeviceLocationUtility extends LocationCallback
     private boolean mIsReceivingUpdates;
 
 
-    /** Constructor */
+    /**
+     * Constructor.
+     *
+     * Takes a reference to the calling Activity as a parameter and assigns it to a WeakReference
+     * object in order to allow it to be properly garbage-collected if necessary.
+     *
+     * Any method that relies on the Activity attempts to re-acquire a strong reference to it,
+     * checks its state (for example not null, not finishing etc.) and exits gracefully if it
+     * is no longer available.
+     *
+     * Default LocationRequest parameters are also assigned here.
+     */
     public DeviceLocationUtility(Activity activity){
         // assign the activity to the weak reference
         this.weakActivity = new WeakReference<>(activity);

@@ -50,10 +50,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      */
     public void getLastLocation(){
 
-        // First, check the user has granted the required permission. If permission has not yet been
-        // granted the DeviceLocationUtility will automatically ask for it. You must override the
-        // onRequestPermissionsResult callback method in your calling Activity in order to handle
-        // the result of the request.
+        // First, check the user has granted the required permission.
         if (locationUtility.permissionIsGranted()){
 
             // Permission is already granted. First, we'll check the required device location settings
@@ -86,9 +83,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         } else {
 
-            // Permission not granted, ask for it. Here we're passing in a request code that
-            // corresponds to the type of location request we're attempting to make. We can test for
-            // the result of this specific request in onRequestPermissionResult.
+            // Permission not granted, ask for it. You must implement and override the
+            // onRequestPermissionsResult callback method in your calling Activity in order to handle
+            // the result of the request.
+            // Here we're passing in a request code that corresponds to the type of location request
+            // we're attempting to make. We can test for the result of this specific request in the
+            // onRequestPermissionResult callback.
             locationUtility.requestPermission(DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
 
         }
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         } else {
 
-            // Permissions not granted, ask for it
+            // Permission not granted, ask for it
             locationUtility.requestPermission(DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
 
         }
