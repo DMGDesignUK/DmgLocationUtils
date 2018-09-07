@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.dmgdesignuk.devicelocationutility.DeviceLocationCallback;
 import com.dmgdesignuk.devicelocationutility.DeviceLocationUtility;
@@ -22,10 +25,16 @@ import com.google.android.gms.location.LocationRequest;
  */
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback
 {
-
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    // Declare a DeviceLocationUtility member variable
+    private TextView lastLocationText;
+    private TextView currentLocationText;
+    private TextView logOutputText;
+    private Button lastLocationButton;
+    private Button currentLocationButton;
+
+    private int numUpdates = 0;
+
     private DeviceLocationUtility locationUtility;
 
     @Override
@@ -33,12 +42,30 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Assign a new instance of DeviceLocationUtility to our member variable
+        // Create an instance of DeviceLocationUtility
         locationUtility = new DeviceLocationUtility(this);
 
-        // Call the example methods. Check the logs for output.
-        getLastLocation();
-        //getLocationUpdates();
+        // Set everything up...
+        lastLocationText = (TextView)findViewById(R.id.textView_lastLocation);
+        currentLocationText = (TextView)findViewById(R.id.textView_currentLocation);
+        logOutputText = (TextView)findViewById(R.id.textView_logOutput);
+        lastLocationButton = (Button)findViewById(R.id.button_lastLocation);
+        currentLocationButton = (Button)findViewById(R.id.button_currentLocation);
+
+        // Set click listeners on the buttons
+        lastLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getLastLocation(view);
+            }
+        });
+
+        currentLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getLocationUpdates(view);
+            }
+        });
 
     }
 
@@ -48,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * for example on a new or recently factory-reset device or if location services are turned off
      * in device settings.
      */
-    public void getLastLocation(){
+    public void getLastLocation(View view){
 
         // First, check the user has granted the required permission.
         if (locationUtility.permissionIsGranted()){
@@ -67,16 +94,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                     // Location result successfully received. This should never be null as a null
                     // result will be returned via the onFailedRequest callback method instead.
-                    Log.i(TAG, "Device's last known location: " + location.toString());
-                    // Do UI and/or other stuff if necessary.
+                    lastLocationText.setText(getString(R.string.output_location,
+                                             String.valueOf(location.getLatitude()),
+                                             String.valueOf(location.getLongitude())));
 
                 }
                 @Override
                 public void onFailedRequest(String result) {
 
-                    // Location request failed, log an error to the console.
-                    Log.e(TAG, "Unable to get location: " + result);
-                    // Do UI and/or other stuff if necessary.
+                    // Location request failed, output the error.
+                    logOutputText.setText(String.format(getString(R.string.output_failed), result));
 
                 }
             });
@@ -107,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * See https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest
      * for a list of power priority constants.
      */
-    public void getLocationUpdates(){
+    public void getLocationUpdates(View view){
 
         // OPTIONAL: Use the setLocationRequestParams() method to change the default location
         //           request values. Here we're setting up the location request with a target update
@@ -127,14 +154,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 public void onLocationResult(Location location) {
 
                     // Location result successfully returned
-                    Log.i(TAG, "Current location: " + location.toString());
+                    currentLocationText.setText(String.format(getString(R.string.output_location),
+                                                String.valueOf(location.getLatitude()),
+                                                String.valueOf(location.getLongitude())));
+                    // Increment the counter every time a location update is received
+                    numUpdates++;
+                    logOutputText.setText(getString(R.string.output_updates, String.valueOf(numUpdates)));
+                    getAddressElementsFromLocation(location);
 
                 }
                 @Override
                 public void onFailedRequest(String result) {
 
-                    // Location request failed
-                    Log.e(TAG, "Unable to get location: " + result);
+                    // Location request failed, output the error.
+                    logOutputText.setText(String.format(getString(R.string.output_failed), result));
 
                 }
             });
@@ -145,6 +178,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             locationUtility.requestPermission(DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
 
         }
+
+    }
+
+
+    public void getAddressElementsFromLocation(Location location){
+
+        String street = locationUtility.getAddressElement(DeviceLocationUtility.AddressCodes.STREET_ADDRESS, location);
+        String city = locationUtility.getAddressElement(DeviceLocationUtility.AddressCodes.CITY_NAME, location);
+
+        currentLocationText.setText(currentLocationText.getText() + "\n" +
+                                    "Street: " + street + "\n" +
+                                    "City: " + city);
 
     }
 
@@ -176,12 +221,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
                     // Carry on...
-                    getLastLocation();
+                    getLastLocation(lastLocationButton);
                     break;
 
                 case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
                     // Carry on...
-                    getLocationUpdates();
+                    getLocationUpdates(currentLocationButton);
                     break;
 
                 default:
@@ -229,12 +274,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
                     // Carry on where we left off...
-                    getLastLocation();
+                    getLastLocation(lastLocationButton);
                     break;
 
                 case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
                     // Carry on where we left off...
-                    getLocationUpdates();
+                    getLocationUpdates(currentLocationButton);
                     break;
 
                 default:

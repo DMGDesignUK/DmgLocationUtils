@@ -38,27 +38,26 @@ import java.util.Locale;
 /**
  * <h1>Wraps interactions with the Google Play Services FusedLocationProviderClient</h1>
  * <p>
- *     Provides an easy way to work with a device's location, including testing for and
- *     requesting the necessary permission(s) as needed.
+ *  Provides an easy way to work with a device's location, including testing for and
+ *  requesting the necessary permission(s) as needed.
  * </p>
  * <p>
- *     Provides several methods for retrieving the device's current or last known location.
- *     Also provides methods for obtaining the address details of a given location via reverse
- *     Geocoding.
+ *  Provides several methods for retrieving the device's current or last known location.
+ *  Also provides methods for obtaining the address details of a given location via reverse
+ *  Geocoding.
  * </p>
  * <p>
- *     Requires permission to access device's fine location. Make sure to add the appropriate permission
- *     request in your app's Manifest.
- * </p>
+ *  Requires permission to access device's fine location. Make sure to add the appropriate permission
+ *  request in your app's Manifest.
+ * </P>
  * <p>
- *     The calling Activity should implement <strong>ActivityCompat.OnRequestPermissionsResultCallback</strong>
- *     to receive and handle the result(s) of a permission request.
- * </p>
+ *  The calling Activity should implement <strong>ActivityCompat.OnRequestPermissionsResultCallback</strong>
+ *  to receive and handle the result(s) of a permission request.
+ * </P>
  *
- * @author  Dave Gibbons <dave@dmgdesignuk.com>
+ * @author  Dave Gibbons (dave@dmgdesignuk.com)
  * @version 0.1.0
  * @since	2018-08-14
- *
  */
 public class DeviceLocationUtility extends LocationCallback
 {
@@ -523,10 +522,10 @@ public class DeviceLocationUtility extends LocationCallback
         ActivityCompat.requestPermissions(activity,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 requestCode);
-        // requestCode is an int constant. The onRequestPermissionsResult callback
-        // gets the result of the request. The calling Activity should implement
-        // ActivityCompat.OnRequestPermissionsResultCallback then override the
-        // onRequestPermissionsResult() method to handle the result.
+                // requestCode is an int constant. The onRequestPermissionsResult callback
+                // gets the result of the request. The calling Activity should implement
+                // ActivityCompat.OnRequestPermissionsResultCallback then override the
+                // onRequestPermissionsResult() method to handle the result.
     }
 
 

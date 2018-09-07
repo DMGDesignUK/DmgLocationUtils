@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">DeviceLocationUtilityExample</string>
+
+    <string name="textView_lastLocation">Last Known Location: </string>
+    <string name="textView_currentLocation">Current Location: </string>
+
+    <string name="button_lastLocation">Get Last Location</string>
+    <string name="button_currentLocation">Get Current Location Updates</string>
+
+    <string name="output_location">Lat: %1$s Long: %2$s</string>
+    <string name="output_failed">Unable to get location: %1$s</string>
+    <string name="output_updates">
+        Receiving location updates\n
+        Updates received: %1$s
+    </string>
 </resources>
