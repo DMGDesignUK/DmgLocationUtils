@@ -1,4 +1,4 @@
-package com.dmgdesignuk.devicelocationutility;
+package com.dmgdesignuk.locationutils.easyaddressutility;
 
 import android.location.Address;
 import java.util.List;

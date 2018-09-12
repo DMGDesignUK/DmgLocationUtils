@@ -1,4 +1,4 @@
-package com.dmgdesignuk.devicelocationutility;
+package com.dmgdesignuk.locationutils.easylocationutility;
 
 public interface PermissionRequestCallback {
 

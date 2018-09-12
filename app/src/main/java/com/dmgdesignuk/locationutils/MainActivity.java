@@ -13,15 +13,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.dmgdesignuk.devicelocationutility.DeviceLocationCallback;
-import com.dmgdesignuk.devicelocationutility.DeviceLocationUtility;
+import com.dmgdesignuk.locationutils.easyaddressutility.EasyAddressUtility;
+import com.dmgdesignuk.locationutils.easylocationutility.DeviceLocationCallback;
+import com.dmgdesignuk.locationutils.easylocationutility.EasyLocationUtility;
 import com.google.android.gms.location.LocationRequest;
 
 
 /**
- * A simple Activity class giving an example of how you can leverage DeviceLocationUtility to quickly and easily
- * implement location functionality in your app, along with the permissions checking/requesting and device
- * settings checks that go hand-in-hand with it.
+ * A simple Activity example of how you can leverage the EasyLocationUtility and EasyAddressUtility
+ * classes to quickly and easily implement location functionality in your app, along with the permissions
+ * checking/requesting and device settings checks that go hand-in-hand with such functionality.
  */
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback
 {
@@ -35,15 +36,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private int numUpdates = 0;
 
-    private DeviceLocationUtility locationUtility;
+    private EasyLocationUtility locationUtility;
+    private EasyAddressUtility addressUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create an instance of DeviceLocationUtility
-        locationUtility = new DeviceLocationUtility(this);
+        // Create an instance of EasyLocationUtility
+        locationUtility = new EasyLocationUtility(this);
+        // Create an instance of EasyAddressUtility
+        addressUtility = new EasyAddressUtility(this.getApplicationContext());
 
         // Set everything up...
         lastLocationText = (TextView)findViewById(R.id.textView_lastLocation);
@@ -85,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // The result of this can be checked and handled by implementing and overriding the
             // onActivityResult callback in your calling Activity. The request code we're passing in
             // can be tested for in onActivityResult to determine where the request originated.
-            locationUtility.checkDeviceSettings(DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
+            locationUtility.checkDeviceSettings(EasyLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
 
             // Now we can request the last known location from the device's cache.
             locationUtility.getLastKnownLocation(new DeviceLocationCallback() {
@@ -116,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // Here we're passing in a request code that corresponds to the type of location request
             // we're attempting to make. We can test for the result of this specific request in the
             // onRequestPermissionResult callback.
-            locationUtility.requestPermission(DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
+            locationUtility.requestPermission(EasyLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
 
         }
 
@@ -146,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (locationUtility.permissionIsGranted()){
 
             // Check device settings
-            locationUtility.checkDeviceSettings(DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
+            locationUtility.checkDeviceSettings(EasyLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
 
             // Request location updates
             locationUtility.getCurrentLocationUpdates(new DeviceLocationCallback() {
@@ -175,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         } else {
 
             // Permission not granted, ask for it
-            locationUtility.requestPermission(DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
+            locationUtility.requestPermission(EasyLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
 
         }
 
@@ -184,8 +188,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     public void getAddressElementsFromLocation(Location location){
 
-        String street = locationUtility.getAddressElement(DeviceLocationUtility.AddressCodes.STREET_ADDRESS, location);
-        String city = locationUtility.getAddressElement(DeviceLocationUtility.AddressCodes.CITY_NAME, location);
+        String street = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.STREET_ADDRESS, location);
+        String city = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.CITY_NAME, location);
 
         currentLocationText.setText(currentLocationText.getText() + "\n" +
                                     "Street: " + street + "\n" +
@@ -202,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      *                      onRequestPermissionsResult callback which can then be tested for if
      *                      required to determine which request you are responding to.
      * @param permissions   A String array containing the permission(s) requested. For the
-     *                      DeviceLocationUtility this will always be Manifest.permission.ACCESS_FINE_LOCATION.
+     *                      EasyLocationUtility this will always be Manifest.permission.ACCESS_FINE_LOCATION.
      * @param grantResults  An int array containing the result for each requested permission. It will either
      *                      be PackageManager.PERMISSION_GRANTED or PackageManager.PERMISSION_DENIED.
      */
@@ -219,12 +223,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // Query the incoming request code to determine which request we're responding to
             switch (requestCode) {
 
-                case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
+                case EasyLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
                     // Carry on...
                     getLastLocation(lastLocationButton);
                     break;
 
-                case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
+                case EasyLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
                     // Carry on...
                     getLocationUpdates(currentLocationButton);
                     break;
@@ -251,10 +255,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * @param requestCode   When a settings change request is made a requset code is passed along to the
      *                      onActivityResult callback which can then be tested for if required to
      *                      determine which request you are responding to.
-     * @param resultCode    An int value representing the result of the request. For the DeviceLocationUtility
+     * @param resultCode    An int value representing the result of the request. For the EasyLocationUtility
      *                      this will always be either RESULT_OK or RESULT_CANCELED.
      * @param data          An Intent object containing any returned data from the calling Activity. For the
-     *                      DeviceLocationUtility this will always be null and so can be ignored.
+     *                      EasyLocationUtility this will always be null and so can be ignored.
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -272,12 +276,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // which request we're responding to and take the appropriate action.
             switch (requestCode){
 
-                case DeviceLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
+                case EasyLocationUtility.RequestCodes.LAST_KNOWN_LOCATION:
                     // Carry on where we left off...
                     getLastLocation(lastLocationButton);
                     break;
 
-                case DeviceLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
+                case EasyLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES:
                     // Carry on where we left off...
                     getLocationUpdates(currentLocationButton);
                     break;

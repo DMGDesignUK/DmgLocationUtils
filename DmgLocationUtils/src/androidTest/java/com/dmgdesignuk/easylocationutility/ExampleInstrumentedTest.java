@@ -1,4 +1,4 @@
-package com.dmgdesignuk.devicelocationutility;
+package com.dmgdesignuk.easylocationutility;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
