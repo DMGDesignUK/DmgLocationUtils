@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.dmgdesignuk.locationutils.easyaddressutility.EasyAddressUtility;
-import com.dmgdesignuk.locationutils.easylocationutility.DeviceLocationCallback;
+import com.dmgdesignuk.locationutils.easylocationutility.LocationRequestCallback;
 import com.dmgdesignuk.locationutils.easylocationutility.EasyLocationUtility;
 import com.google.android.gms.location.LocationRequest;
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             locationUtility.checkDeviceSettings(EasyLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
 
             // Now we can request the last known location from the device's cache.
-            locationUtility.getLastKnownLocation(new DeviceLocationCallback() {
+            locationUtility.getLastKnownLocation(new LocationRequestCallback() {
                 @Override
                 public void onLocationResult(Location location) {
 
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             locationUtility.checkDeviceSettings(EasyLocationUtility.RequestCodes.CURRENT_LOCATION_UPDATES);
 
             // Request location updates
-            locationUtility.getCurrentLocationUpdates(new DeviceLocationCallback() {
+            locationUtility.getCurrentLocationUpdates(new LocationRequestCallback() {
                 @Override
                 public void onLocationResult(Location location) {
 

@@ -1,4 +1,4 @@
-package com.dmgdesignuk.easylocationutility;
+package com.dmgdesignuk.locationutils;
 
 import org.junit.Test;
 

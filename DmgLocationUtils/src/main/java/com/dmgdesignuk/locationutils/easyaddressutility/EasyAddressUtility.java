@@ -1,6 +1,5 @@
 package com.dmgdesignuk.locationutils.easyaddressutility;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,7 +12,26 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class EasyAddressUtility {
+/**
+ * <h1>A simple wrapper around Android's address Geocoder</h1>
+ *
+ * <p>Provides an easy way to obtain the address information associated with a given
+ *    Latitude or Longitutde from reverse geocoding by passing in int constants that
+ *    correspond to a specific address line.</p>
+ *
+ * <p>A List object containing all address data can also be retrieved. The calling should
+ *    implement an AddressResultCallback callback interface to receive the result.</p>
+ *
+ * <p>Part of the DmgLocationUtils library</p>
+ *
+ * @author  Dave Gibbons (dave@dmgdesignuk.com)
+ * @version 0.1.0
+ * @since	2018-08-14
+ */
+public class EasyAddressUtility
+{
+    private static final String TAG = EasyAddressUtility.class.getSimpleName();
+
 
     /**
      * Static nested class defining int constants for use with reverse Geocoding of address data
@@ -32,7 +50,7 @@ public class EasyAddressUtility {
         public static final int STREET_ADDRESS = 9;
         public static final int SUB_ADMIN_AREA = 10;
         public static final int SUB_THOROUGHFARE = 11;
-    }
+    }// End AddressCodes class
 
 
     private Context mContext;
@@ -42,18 +60,27 @@ public class EasyAddressUtility {
     /**
      * Constructor.
      *
-     * Takes a reference to the calling Activity as a parameter and assigns it to a WeakReference
-     * object in order to allow it to be properly garbage-collected if necessary.
+     * Takes a reference to a Context as a parameter.
      *
-     * Any method that relies on the Activity attempts to re-acquire a strong reference to it,
-     * checks its state (for example not null, not finishing etc.) and exits gracefully if it
-     * is no longer available.
-     *
-     * Default LocationRequest parameters are also assigned here.
+     * Instantiates a Geocoder object using the device's default locale. If a different
+     * locale is required the changeGeocoderLocale() method can be used to achieve this.
      */
     public EasyAddressUtility(Context context){
 
         this.mContext = context;
+        this.mGeocoder = new Geocoder(mContext, Locale.getDefault());
+
+    }
+
+
+    /**
+     * Changes the Locale used by the Geocoder to format address information.
+     *
+     * @param   locale  A user-specified Locale object
+     */
+    public void changeGeocoderLocale(Locale locale){
+
+        this.mGeocoder = new Geocoder(mContext, locale);
 
     }
 
@@ -69,7 +96,6 @@ public class EasyAddressUtility {
      */
     public void getAddressList(Location location, AddressResultCallback callback){
 
-        mGeocoder = new Geocoder(mContext, Locale.getDefault());
         List<Address> addressList = null;
 
         try {
@@ -111,7 +137,6 @@ public class EasyAddressUtility {
      */
     public String getAddressElement(int elementCode, Location location){
 
-        mGeocoder = new Geocoder(mContext, Locale.getDefault());
         List<Address> addressList;
         Address address;
         String elementString = null;
@@ -185,4 +210,5 @@ public class EasyAddressUtility {
         return elementString;
     }
 
-}
+
+}// End EasyAddressUtility class

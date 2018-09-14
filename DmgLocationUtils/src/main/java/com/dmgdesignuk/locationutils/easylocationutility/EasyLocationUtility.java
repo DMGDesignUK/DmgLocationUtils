@@ -46,6 +46,8 @@ import java.lang.ref.WeakReference;
  * <p>The calling Activity should implement <strong>ActivityCompat.OnRequestPermissionsResultCallback</strong>
  *    to receive and handle the result(s) of a permission request.</P>
  *
+ * <p>Part of the DmgLocationUtils library</p>
+ *
  * @author  Dave Gibbons (dave@dmgdesignuk.com)
  * @version 0.1.0
  * @since	2018-08-14
@@ -64,7 +66,7 @@ public class EasyLocationUtility extends LocationCallback
         public static final int CURRENT_LOCATION_UPDATES = 1;
         public static final int LAST_KNOWN_LOCATION = 2;
         public static final int SMART_LOCATION = 3;
-    }
+    }// End RequestCodes nested class
 
 
     /**
@@ -147,10 +149,11 @@ public class EasyLocationUtility extends LocationCallback
             this.mMessage = message;
         }
 
-    }
+    }// End RationaleDialogProvider nested class
 
 
-    // Hold a WeakReference to the host activity (allows it to be garbage-collected to prevent possible memory leak)
+    // Hold a WeakReference to the host activity (allows it to be garbage-collected to prevent
+    // possible memory leak)
     private final WeakReference<Activity> weakActivity;
 
     private FusedLocationProviderClient mLocationClient;
@@ -202,16 +205,16 @@ public class EasyLocationUtility extends LocationCallback
 
     /**
      * Retrieves and returns the device's cached last known location via an instance of
-     * DeviceLocationCallback, which must be implemented by the caller.
+     * LocationRequestCallback, which must be implemented by the caller.
      *
      * Location can be null in certain circumstances, for example on a new or recently
      * factory-reset device or if location services are turned off in device settings.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      */
     @SuppressLint("MissingPermission")
-    public void getLastKnownLocation(final DeviceLocationCallback callback){
+    public void getLastKnownLocation(final LocationRequestCallback callback){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
         final Activity activity = weakActivity.get();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -241,7 +244,7 @@ public class EasyLocationUtility extends LocationCallback
 
 
     /**
-     * Returns the device's current location via an instance of DeviceLocationCallback,
+     * Returns the device's current location via an instance of LocationRequestCallback,
      * which must be implemented by the caller.
      *
      * Turns on location updates, retrieves the current device location then turns
@@ -249,11 +252,11 @@ public class EasyLocationUtility extends LocationCallback
      * but location services are turned on, or if a more recent or accurate location
      * is needed than the one stored in the device's cache.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      */
     @SuppressLint("MissingPermission")
-    public void getCurrentLocationOneTime(final DeviceLocationCallback callback){
+    public void getCurrentLocationOneTime(final LocationRequestCallback callback){
         if (mIsReceivingUpdates){
             callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_requests_currently_active));
             return;
@@ -289,7 +292,7 @@ public class EasyLocationUtility extends LocationCallback
 
     /**
      * Starts a location update request with the parameters specified by mLocationRequest and
-     * returns the location result via an instance of DeviceLocationCallback, which must be
+     * returns the location result via an instance of LocationRequestCallback, which must be
      * implemented by the caller.
      *
      * This is inherently power-intensive so care should be taken to balance the frequency
@@ -298,13 +301,13 @@ public class EasyLocationUtility extends LocationCallback
      * Location updates should be disabled using the stopLocationUpdates() method when no
      * longer needed, such as when the user closes or otherwise navigates away from the app.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      *
      * @see EasyLocationUtility#stopLocationUpdates()
      */
     @SuppressLint("MissingPermission")
-    public void getCurrentLocationUpdates(final DeviceLocationCallback callback){
+    public void getCurrentLocationUpdates(final LocationRequestCallback callback){
         if (mIsReceivingUpdates){
             callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_requests_currently_active));
             return;
@@ -337,7 +340,7 @@ public class EasyLocationUtility extends LocationCallback
 
 
     /**
-     * Returns the best available location via an instance of DeviceLocationCallback, which
+     * Returns the best available location via an instance of LocationRequestCallback, which
      * must be implemented by the caller.
      *
      * Checks if last known location is available. If unavailable (null) then a single
@@ -349,11 +352,11 @@ public class EasyLocationUtility extends LocationCallback
      * This method should be preferred over the getLastKnownLocation() and
      * getCurrentLocationOneTime() methods in most use cases.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      */
     @SuppressLint("MissingPermission")
-    public void getSmartLocation(final DeviceLocationCallback callback){
+    public void getSmartLocation(final LocationRequestCallback callback){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
         Activity activity = weakActivity.get();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -419,7 +422,7 @@ public class EasyLocationUtility extends LocationCallback
     /**
      * Simple check to see if the required permission has been granted.
      *
-     * @return  true if permission granted, false if not.
+     * @return  True if permission granted, false if not.
      */
     public boolean permissionIsGranted(){
 
@@ -479,7 +482,7 @@ public class EasyLocationUtility extends LocationCallback
     /**
      * Called by requestPermission() to initiate a permission request
      *
-     * @param   requestCode the request code passed in by requestPermission()
+     * @param   requestCode The request code passed in by requestPermission()
      *
      * @see EasyLocationUtility#requestPermission(int)
      */
@@ -563,7 +566,7 @@ public class EasyLocationUtility extends LocationCallback
     /**
      * Determines if location updates are currently active or not
      *
-     * @return  true if receiving location updates, false if not.
+     * @return  True if receiving location updates, false if not.
      */
     public boolean isReceivingLocationUpdates(){
         return mIsReceivingUpdates;
@@ -574,7 +577,7 @@ public class EasyLocationUtility extends LocationCallback
      * Determines if continuous location updates have been initiated at any
      * point within the object's life.
      *
-     * @return  true if so, false if not.
+     * @return  True if so, false if not.
      */
     public boolean hasEverReceivedLocationUpdates(){
         return  mHasReceivedLocationUpdates;
@@ -624,11 +627,11 @@ public class EasyLocationUtility extends LocationCallback
      * Provides a way for a calling Activity to set or change the default parameters of
      * the LocationRequest object to suit its needs.
      *
-     * @param interval          Set the desired interval for active location updates, in milliseconds.
-     * @param fastestInterval   Explicitly set the fastest interval for location updates, in
+     * @param   interval        Set the desired interval for active location updates, in milliseconds.
+     * @param   fastestInterval Explicitly set the fastest interval for location updates, in
      *        	                milliseconds. This controls the fastest rate at which your
      *			                application will receive location updates.
-     * @param priority          Set the priority of the request. Use with a priority constant such as
+     * @param   priority        Set the priority of the request. Use with a priority constant such as
      *                          LocationRequest.PRIORITY_HIGH_ACCURACY. No other values are accepted.
      */
     public void setLocationRequestParams(long interval, long fastestInterval, int priority){
