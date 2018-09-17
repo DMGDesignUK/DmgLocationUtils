@@ -33,7 +33,7 @@ import java.lang.ref.WeakReference;
 
 
 /**
- * <h1>Wraps interactions with the Google Play Services FusedLocationProviderClient</h1>
+ * <h1>An abstraction layer for interactions with the Google Play Services FusedLocationProviderClient</h1>
  *
  * <p>Provides an easy way to work with a device's location, including testing for and
  *    requesting the necessary permission(s) as needed.</p>
@@ -66,7 +66,7 @@ public class EasyLocationUtility extends LocationCallback
         public static final int CURRENT_LOCATION_UPDATES = 1;
         public static final int LAST_KNOWN_LOCATION = 2;
         public static final int SMART_LOCATION = 3;
-    }// End RequestCodes nested class
+    }
 
 
     /**

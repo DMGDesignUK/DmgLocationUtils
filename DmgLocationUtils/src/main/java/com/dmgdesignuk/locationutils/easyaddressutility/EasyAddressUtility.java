@@ -13,14 +13,14 @@ import java.util.Locale;
 
 
 /**
- * <h1>A simple wrapper around Android's address Geocoder</h1>
+ * <h1>An abstraction layer around Android's Geocoder implementation</h1>
  *
  * <p>Provides an easy way to obtain the address information associated with a given
  *    Latitude or Longitutde from reverse geocoding by passing in int constants that
  *    correspond to a specific address line.</p>
  *
- * <p>A List object containing all address data can also be retrieved. The calling should
- *    implement an AddressResultCallback callback interface to receive the result.</p>
+ * <p>A List object containing all address data can also be retrieved. The calling method
+ *    should implement a new AddressResultCallback interface to receive the result.</p>
  *
  * <p>Part of the DmgLocationUtils library</p>
  *

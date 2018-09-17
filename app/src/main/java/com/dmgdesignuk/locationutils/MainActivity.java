@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // the result of the request.
             // Here we're passing in a request code that corresponds to the type of location request
             // we're attempting to make. We can test for the result of this specific request in the
-            // onRequestPermissionResult callback.
+            // onRequestPermissionResult implementation.
             locationUtility.requestPermission(EasyLocationUtility.RequestCodes.LAST_KNOWN_LOCATION);
 
         }
@@ -191,6 +191,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         String street = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.STREET_ADDRESS, location);
         String city = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.CITY_NAME, location);
 
+        // Best practice is to place all Strings in a String resource xml file as we have done elsewhere, but
+        // for the sake of example we'll just hard-code these ones.
         currentLocationText.setText(currentLocationText.getText() + "\n" +
                                     "Street: " + street + "\n" +
                                     "City: " + city);
