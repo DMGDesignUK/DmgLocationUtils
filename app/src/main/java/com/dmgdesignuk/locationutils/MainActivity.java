@@ -20,8 +20,8 @@ import com.google.android.gms.location.LocationRequest;
 
 
 /**
- * A simple Activity example of how you can leverage the EasyLocationUtility and EasyAddressUtility
- * classes to quickly and easily implement location functionality in your app, along with the permissions
+ * A simple example of how you can leverage the EasyLocationUtility and EasyAddressUtility classes within
+ * an Activity to quickly and easily implement location functionality in your app, along with the permissions
  * checking/requesting and device settings checks that go hand-in-hand with such functionality.
  */
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback

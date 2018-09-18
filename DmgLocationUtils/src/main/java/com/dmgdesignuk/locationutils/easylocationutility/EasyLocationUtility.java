@@ -47,9 +47,10 @@ import java.lang.ref.WeakReference;
  *    to receive and handle the result(s) of a permission request.</P>
  *
  * <p>Part of the DmgLocationUtils library</p>
+ * @see <a href="https://github.com/DMGDesignUK/DmgLocationUtils">DmgLocationUtils on Github</a>
  *
  * @author  Dave Gibbons (dave@dmgdesignuk.com)
- * @version 0.1.0
+ * @version 1.0.0
  * @since	2018-08-14
  */
 public class EasyLocationUtility extends LocationCallback
