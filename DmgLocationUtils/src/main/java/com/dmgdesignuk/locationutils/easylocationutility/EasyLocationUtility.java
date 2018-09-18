@@ -1,4 +1,4 @@
-package com.dmgdesignuk.devicelocationutility;
+package com.dmgdesignuk.locationutils.easylocationutility;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -8,13 +8,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+
+import com.dmgdesignuk.locationutils.R;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,39 +29,32 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Locale;
 
 
 /**
- * <h1>Wraps interactions with the Google Play Services FusedLocationProviderClient</h1>
- * <p>
- *  Provides an easy way to work with a device's location, including testing for and
- *  requesting the necessary permission(s) as needed.
- * </p>
- * <p>
- *  Provides several methods for retrieving the device's current or last known location.
- *  Also provides methods for obtaining the address details of a given location via reverse
- *  Geocoding.
- * </p>
- * <p>
- *  Requires permission to access device's fine location. Make sure to add the appropriate permission
- *  request in your app's Manifest.
- * </P>
- * <p>
- *  The calling Activity should implement <strong>ActivityCompat.OnRequestPermissionsResultCallback</strong>
- *  to receive and handle the result(s) of a permission request.
- * </P>
+ * <h1>An abstraction layer for interactions with the Google Play Services FusedLocationProviderClient</h1>
+ *
+ * <p>Provides an easy way to work with a device's location, including testing for and
+ *    requesting the necessary permission(s) as needed.</p>
+ *
+ * <p>Provides several methods for retrieving the device's current or last known location.</p>
+ *
+ * <p>Requires permission to access device's fine location. Make sure to add the appropriate permission
+ *    request in your app's Manifest.</P>
+ *
+ * <p>The calling Activity should implement <strong>ActivityCompat.OnRequestPermissionsResultCallback</strong>
+ *    to receive and handle the result(s) of a permission request.</P>
+ *
+ * <p>Part of the DmgLocationUtils library</p>
  *
  * @author  Dave Gibbons (dave@dmgdesignuk.com)
  * @version 0.1.0
  * @since	2018-08-14
  */
-public class DeviceLocationUtility extends LocationCallback
+public class EasyLocationUtility extends LocationCallback
 {
-    private static final String TAG = DeviceLocationUtility.class.getSimpleName();
+    private static final String TAG = EasyLocationUtility.class.getSimpleName();
 
 
     /**
@@ -75,24 +68,6 @@ public class DeviceLocationUtility extends LocationCallback
         public static final int SMART_LOCATION = 3;
     }
 
-    /**
-     * Static nested class defining int constants for use with reverse Geocoding of address data
-     */
-    public static class AddressCodes
-    {
-        public static final int ADMIN_AREA = 0;
-        public static final int CITY_NAME = 1;
-        public static final int COUNTRY_CODE = 2;
-        public static final int COUNTRY_NAME = 3;
-        public static final int FEATURE_NAME = 4;
-        public static final int FULL_ADDRESS = 5;
-        public static final int PHONE_NUMBER = 6;
-        public static final int POST_CODE = 7;
-        public static final int PREMISES = 8;
-        public static final int STREET_ADDRESS = 9;
-        public static final int SUB_ADMIN_AREA = 10;
-        public static final int SUB_THOROUGHFARE = 11;
-    }
 
     /**
      * Static nested class to handle displaying a dialog providing additional rationale to
@@ -174,17 +149,17 @@ public class DeviceLocationUtility extends LocationCallback
             this.mMessage = message;
         }
 
-    }
+    }// End RationaleDialogProvider nested class
 
 
-    // Hold a WeakReference to the host activity (allows it to be garbage-collected to prevent possible memory leak)
+    // Hold a WeakReference to the host activity (allows it to be garbage-collected to prevent
+    // possible memory leak)
     private final WeakReference<Activity> weakActivity;
 
     private FusedLocationProviderClient mLocationClient;
     private Context mContext;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
-    private Geocoder mGeocoder;
 
     // Flag to track if continuous location updates have been requested at any point within the
     // object's life. False by default and set to true by any method that requests continuous updates.
@@ -205,7 +180,7 @@ public class DeviceLocationUtility extends LocationCallback
      *
      * Default LocationRequest parameters are also assigned here.
      */
-    public DeviceLocationUtility(Activity activity){
+    public EasyLocationUtility(Activity activity){
         // assign the activity to the weak reference
         this.weakActivity = new WeakReference<>(activity);
 
@@ -230,16 +205,16 @@ public class DeviceLocationUtility extends LocationCallback
 
     /**
      * Retrieves and returns the device's cached last known location via an instance of
-     * DeviceLocationCallback, which must be implemented by the caller.
+     * LocationRequestCallback, which must be implemented by the caller.
      *
      * Location can be null in certain circumstances, for example on a new or recently
      * factory-reset device or if location services are turned off in device settings.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      */
     @SuppressLint("MissingPermission")
-    public void getLastKnownLocation(final DeviceLocationCallback callback){
+    public void getLastKnownLocation(final LocationRequestCallback callback){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
         final Activity activity = weakActivity.get();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -269,7 +244,7 @@ public class DeviceLocationUtility extends LocationCallback
 
 
     /**
-     * Returns the device's current location via an instance of DeviceLocationCallback,
+     * Returns the device's current location via an instance of LocationRequestCallback,
      * which must be implemented by the caller.
      *
      * Turns on location updates, retrieves the current device location then turns
@@ -277,11 +252,11 @@ public class DeviceLocationUtility extends LocationCallback
      * but location services are turned on, or if a more recent or accurate location
      * is needed than the one stored in the device's cache.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      */
     @SuppressLint("MissingPermission")
-    public void getCurrentLocationOneTime(final DeviceLocationCallback callback){
+    public void getCurrentLocationOneTime(final LocationRequestCallback callback){
         if (mIsReceivingUpdates){
             callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_requests_currently_active));
             return;
@@ -317,7 +292,7 @@ public class DeviceLocationUtility extends LocationCallback
 
     /**
      * Starts a location update request with the parameters specified by mLocationRequest and
-     * returns the location result via an instance of DeviceLocationCallback, which must be
+     * returns the location result via an instance of LocationRequestCallback, which must be
      * implemented by the caller.
      *
      * This is inherently power-intensive so care should be taken to balance the frequency
@@ -326,13 +301,13 @@ public class DeviceLocationUtility extends LocationCallback
      * Location updates should be disabled using the stopLocationUpdates() method when no
      * longer needed, such as when the user closes or otherwise navigates away from the app.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      *
-     * @see DeviceLocationUtility#stopLocationUpdates()
+     * @see EasyLocationUtility#stopLocationUpdates()
      */
     @SuppressLint("MissingPermission")
-    public void getCurrentLocationUpdates(final DeviceLocationCallback callback){
+    public void getCurrentLocationUpdates(final LocationRequestCallback callback){
         if (mIsReceivingUpdates){
             callback.onFailedRequest(mContext.getString(R.string.deviceLocationUtil_requests_currently_active));
             return;
@@ -365,7 +340,7 @@ public class DeviceLocationUtility extends LocationCallback
 
 
     /**
-     * Returns the best available location via an instance of DeviceLocationCallback, which
+     * Returns the best available location via an instance of LocationRequestCallback, which
      * must be implemented by the caller.
      *
      * Checks if last known location is available. If unavailable (null) then a single
@@ -377,11 +352,11 @@ public class DeviceLocationUtility extends LocationCallback
      * This method should be preferred over the getLastKnownLocation() and
      * getCurrentLocationOneTime() methods in most use cases.
      *
-     * @param   callback An interface which must be implemented by the caller in order to
-     *		    receive the results of the location request.
+     * @param   callback    An interface which must be implemented by the caller in order to
+     *		                receive the results of the location request.
      */
     @SuppressLint("MissingPermission")
-    public void getSmartLocation(final DeviceLocationCallback callback){
+    public void getSmartLocation(final LocationRequestCallback callback){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
         Activity activity = weakActivity.get();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -447,7 +422,7 @@ public class DeviceLocationUtility extends LocationCallback
     /**
      * Simple check to see if the required permission has been granted.
      *
-     * @return  true if permission granted, false if not.
+     * @return  True if permission granted, false if not.
      */
     public boolean permissionIsGranted(){
 
@@ -507,9 +482,9 @@ public class DeviceLocationUtility extends LocationCallback
     /**
      * Called by requestPermission() to initiate a permission request
      *
-     * @param   requestCode the request code passed in by requestPermission()
+     * @param   requestCode The request code passed in by requestPermission()
      *
-     * @see DeviceLocationUtility#requestPermission(int)
+     * @see EasyLocationUtility#requestPermission(int)
      */
     private void startPermissionRequest(int requestCode){
         // Re-acquire a strong reference to the calling activity and verify that it still exists and is active
@@ -591,7 +566,7 @@ public class DeviceLocationUtility extends LocationCallback
     /**
      * Determines if location updates are currently active or not
      *
-     * @return  true if receiving location updates, false if not.
+     * @return  True if receiving location updates, false if not.
      */
     public boolean isReceivingLocationUpdates(){
         return mIsReceivingUpdates;
@@ -602,7 +577,7 @@ public class DeviceLocationUtility extends LocationCallback
      * Determines if continuous location updates have been initiated at any
      * point within the object's life.
      *
-     * @return  true if so, false if not.
+     * @return  True if so, false if not.
      */
     public boolean hasEverReceivedLocationUpdates(){
         return  mHasReceivedLocationUpdates;
@@ -634,7 +609,7 @@ public class DeviceLocationUtility extends LocationCallback
      * This should be called in the calling Activity's onResume() method if
      * you want your app to continue to receive location updates when it resumes
      *
-     * @see DeviceLocationUtility#stopLocationUpdates()
+     * @see EasyLocationUtility#stopLocationUpdates()
      */
     @SuppressLint("MissingPermission")
     public void resumeLocationUpdates(){
@@ -652,11 +627,11 @@ public class DeviceLocationUtility extends LocationCallback
      * Provides a way for a calling Activity to set or change the default parameters of
      * the LocationRequest object to suit its needs.
      *
-     * @param interval          Set the desired interval for active location updates, in milliseconds.
-     * @param fastestInterval   Explicitly set the fastest interval for location updates, in
+     * @param   interval        Set the desired interval for active location updates, in milliseconds.
+     * @param   fastestInterval Explicitly set the fastest interval for location updates, in
      *        	                milliseconds. This controls the fastest rate at which your
      *			                application will receive location updates.
-     * @param priority          Set the priority of the request. Use with a priority constant such as
+     * @param   priority        Set the priority of the request. Use with a priority constant such as
      *                          LocationRequest.PRIORITY_HIGH_ACCURACY. No other values are accepted.
      */
     public void setLocationRequestParams(long interval, long fastestInterval, int priority){
@@ -672,132 +647,4 @@ public class DeviceLocationUtility extends LocationCallback
     }
 
 
-    /**
-     * Returns a List object containing the address information for the supplied
-     * Location object. Will be null if no address found. The caller should
-     * implement an AddressResultCallback to receive and handle the result.
-     *
-     * @param   location    A Location object containing latitude and longitude.
-     * @param   callback    An interface which must be implemented by the caller in order to
-     *		                receive the results of the request.
-     */
-    public void getAddressList(Location location, AddressResultCallback callback){
-
-        mGeocoder = new Geocoder(mContext, Locale.getDefault());
-        List<Address> addressList = null;
-
-        try {
-
-            addressList = mGeocoder.getFromLocation(
-                    location.getLatitude(), location.getLongitude(),
-                    1); // We only want one address to be returned.
-
-        } catch (IOException e) {
-            // Catch network or other IO problems
-            callback.onAddressFailedResult(mContext.getString(R.string.deviceLocationUtil_geocoder_not_available));
-            return;
-        } catch (IllegalArgumentException e) {
-            // Catch invalid latitude or longitude values
-            callback.onAddressFailedResult(mContext.getString(R.string.deviceLocationUtil_geocoder_invalid_latLong));
-            return;
-        }
-
-        // Handle case where no address is found
-        if (addressList == null || addressList.size() == 0) {
-            callback.onAddressFailedResult(mContext.getString(R.string.deviceLocationUtil_geocoder_address_not_found));
-        } else {
-            // Return the address list
-            callback.onAddressSuccessfulResult(addressList);
-        }
-
-    }
-
-
-    /**
-     * Returns a String containing the requested address element or null if not found
-     *
-     * @param   elementCode A package-defined int constant representing the specific
-     *                      address element to return.
-     * @param   location    A Location object containing a latitude and longitude.
-     *
-     * @return  String containing the requested address element if found, a reason for
-     *          failure if necessary or null if address element doesn't exist.
-     */
-    public String getAddressElement(int elementCode, Location location){
-
-        mGeocoder = new Geocoder(mContext, Locale.getDefault());
-        List<Address> addressList;
-        Address address;
-        String elementString = null;
-
-        try {
-
-            addressList = mGeocoder.getFromLocation(
-                    location.getLatitude(), location.getLongitude(),
-                    1); // We only want one address to be returned.
-
-        } catch (IOException e) {
-            // Catch network or other IO problems
-            return mContext.getString(R.string.deviceLocationUtil_geocoder_not_available);
-        } catch (IllegalArgumentException e) {
-            // Catch invalid latitude or longitude values
-            return mContext.getString(R.string.deviceLocationUtil_geocoder_invalid_latLong);
-        }
-
-        // Handle case where no address is found
-        if (addressList == null || addressList.size() == 0){
-            return mContext.getString(R.string.deviceLocationUtil_geocoder_address_not_found);
-        } else {
-            // Create the Address object from the address list
-            address = addressList.get(0);
-        }
-
-        // Get the specific address element requested by the caller
-        switch (elementCode){
-
-            case AddressCodes.ADMIN_AREA:
-                elementString = address.getAdminArea();
-                break;
-            case AddressCodes.CITY_NAME:
-                elementString = address.getLocality();
-                break;
-            case AddressCodes.COUNTRY_CODE:
-                elementString = address.getCountryCode();
-                break;
-            case AddressCodes.COUNTRY_NAME:
-                elementString = address.getCountryName();
-                break;
-            case AddressCodes.FEATURE_NAME:
-                elementString = address.getFeatureName();
-                break;
-            case AddressCodes.FULL_ADDRESS:
-                elementString = address.toString();
-                break;
-            case AddressCodes.PHONE_NUMBER:
-                elementString = address.getPhone();
-                break;
-            case AddressCodes.POST_CODE:
-                elementString = address.getPostalCode();
-                break;
-            case AddressCodes.PREMISES:
-                elementString = address.getPremises();
-                break;
-            case AddressCodes.STREET_ADDRESS:
-                elementString = address.getThoroughfare();
-                break;
-            case AddressCodes.SUB_ADMIN_AREA:
-                elementString = address.getSubAdminArea();
-                break;
-            case AddressCodes.SUB_THOROUGHFARE:
-                elementString = address.getSubThoroughfare();
-                break;
-            default:
-                elementString = mContext.getString(R.string.deviceLocationUtil_geocoder_invalid_element);
-                break;
-        }
-
-        return elementString;
-    }
-
-
-}// End DeviceLocationUtility class
+}// End EasyLocationUtility class
