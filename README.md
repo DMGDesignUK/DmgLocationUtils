@@ -4,6 +4,9 @@
 
 ---
 
+[![](https://jitpack.io/v/DMGDesignUK/DmgLocationUtils.svg)](https://jitpack.io/#DMGDesignUK/DmgLocationUtils)
+
+
 ### EasyLocationUtility
 
 ##### An abstraction layer for the Google Play Services FusedLocationProviderClient API
