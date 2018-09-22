@@ -15,7 +15,7 @@ Provides a simple to use wrapper for some of the more common location-related ta
 - Test if user has granted permission to access the device's fine location and request it if not
 - Test if required device setttings are satisfied and request the user enable them if not
 
-See the documentation<link?> for full details.
+See the [documentation](http://www.dmgdesignuk.com/pages/docs/dmglocationutils/index.html) for full details.
 
 ### EasyAddressUtility
 
@@ -57,7 +57,7 @@ Add the following permission in your Androidmanifest.xml file:
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
 
-The following is a very basic example of how you can implement some of the more common use-cases. For more examples have a look at the source code of the [example app](https://github.com/DMGDesignUK/DmgLocationUtils/blob/master/app/src/main/java/com/dmgdesignuk/locationutils/MainActivity.java), which is extensively commented, or read the full Javadoc [here](link?)
+The following is a very basic example of how you can implement some of the more common use-cases. For more examples have a look at the source code of the [example app](https://github.com/DMGDesignUK/DmgLocationUtils/blob/master/app/src/main/java/com/dmgdesignuk/locationutils/MainActivity.java), which is extensively commented, or read the full Javadoc [here](http://www.dmgdesignuk.com/pages/docs/dmglocationutils/index.html)
 ```java
     // Create instances of the utilities
     EasyLocationUtility locationUtility = new EasyLocationUtil(this);
@@ -107,7 +107,8 @@ Feedback is an important part of expanding and improving any project. Found a bu
 ---
 ### License
 Copyright(c) 2018 Dave Gibbons
-DMgDesignUK | dave@dmgdesignuk.com
+
+[DMgDesignUK](http://www.dmgdesignuk.com/) | dave@dmgdesignuk.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
