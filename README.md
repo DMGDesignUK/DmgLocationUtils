@@ -44,7 +44,7 @@ Add the dependency to your **app** *build.gradle* file:
 
 ```java
 	dependencies {
-		implementation 'com.github.User:Repo:Tag'
+		implementation 'com.github.DMGDesignUK:DmgLocationUtils:v1.0.0'
 	}
 ```
 
