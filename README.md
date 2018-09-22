@@ -5,6 +5,7 @@
 ---
 
 [![](https://jitpack.io/v/DMGDesignUK/DmgLocationUtils.svg)](https://jitpack.io/#DMGDesignUK/DmgLocationUtils)
+[![API](https://img.shields.io/badge/API-16%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
 
 ### EasyLocationUtility
@@ -17,6 +18,8 @@ Provides a simple to use wrapper for some of the more common location-related ta
 - Get "smart" location (a combination of the above two functions)
 - Test if user has granted permission to access the device's fine location and request it if not
 - Test if required device setttings are satisfied and request the user enable them if not
+
+See the [documentation](http://www.dmgdesignuk.com/pages/docs/dmglocationutils/index.html) for full details.
 
 ### EasyAddressUtility
 
