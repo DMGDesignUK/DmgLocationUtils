@@ -5,6 +5,7 @@
 ---
 
 [![](https://jitpack.io/v/DMGDesignUK/DmgLocationUtils.svg)](https://jitpack.io/#DMGDesignUK/DmgLocationUtils)
+[![API](https://img.shields.io/badge/API-24%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=24)
 
 
 ### EasyLocationUtility
