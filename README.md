@@ -49,7 +49,7 @@ Add the dependency to your **app** *build.gradle* file:
 
 ```java
 	dependencies {
-		implementation 'com.github.DMGDesignUK:DmgLocationUtils:v1.0.0'
+		implementation 'com.github.DMGDesignUK:DmgLocationUtils:v1.0.1'
 	}
 ```
 
