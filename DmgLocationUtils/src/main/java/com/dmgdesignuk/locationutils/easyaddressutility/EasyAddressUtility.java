@@ -26,7 +26,7 @@ import java.util.Locale;
  * @see <a href="https://github.com/DMGDesignUK/DmgLocationUtils">DmgLocationUtils on Github</a>
  *
  * @author  Dave Gibbons (dave@dmgdesignuk.com)
- * @version 1.0.0
+ * @version 1.0.1
  * @since	2018-08-14
  */
 public class EasyAddressUtility
@@ -48,7 +48,7 @@ public class EasyAddressUtility
         public static final int PHONE_NUMBER = 6;
         public static final int POST_CODE = 7;
         public static final int PREMISES = 8;
-        public static final int STREET_ADDRESS = 9;
+        public static final int STREET_NAME = 9;
         public static final int SUB_ADMIN_AREA = 10;
         public static final int SUB_THOROUGHFARE = 11;
     }// End AddressCodes class
@@ -194,7 +194,7 @@ public class EasyAddressUtility
             case AddressCodes.PREMISES:
                 elementString = address.getPremises();
                 break;
-            case AddressCodes.STREET_ADDRESS:
+            case AddressCodes.STREET_NAME:
                 elementString = address.getThoroughfare();
                 break;
             case AddressCodes.SUB_ADMIN_AREA:

@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -50,7 +51,7 @@ import java.lang.ref.WeakReference;
  * @see <a href="https://github.com/DMGDesignUK/DmgLocationUtils">DmgLocationUtils on Github</a>
  *
  * @author  Dave Gibbons (dave@dmgdesignuk.com)
- * @version 1.0.0
+ * @version 1.0.1
  * @since	2018-08-14
  */
 public class EasyLocationUtility extends LocationCallback
@@ -452,31 +453,36 @@ public class EasyLocationUtility extends LocationCallback
             return;
         }
 
-        // Determine if additional rationale for the permission request should be displayed to the user
-        boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-                activity, Manifest.permission.ACCESS_FINE_LOCATION);
+        // Check device SDK version as run-time permissions were only introduced in SDK ver.23
+        if (Build.VERSION.SDK_INT >= 23) {
 
-        if (shouldProvideRationale){
+            // Determine if additional rationale for the permission request should be displayed to the user
+            boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity, Manifest.permission.ACCESS_FINE_LOCATION);
 
-            // Provide additional rationale to the user. This would happen if the user denied the request
-            // previously but didn't tick the "Don't ask again" checkbox.
-            RationaleDialogProvider dialog = new RationaleDialogProvider(activity);
-            dialog.displayDialog(new PermissionRequestCallback() {
-                @Override
-                public void onRationaleDialogOkPressed() {
-                    // User has dismissed the dialog, carry on with the request
-                    startPermissionRequest(requestCode);
-                }
-            });
+            if (shouldProvideRationale) {
 
-        } else {
+                // Provide additional rationale to the user. This would happen if the user denied the request
+                // previously but didn't tick the "Don't ask again" checkbox.
+                RationaleDialogProvider dialog = new RationaleDialogProvider(activity);
+                dialog.displayDialog(new PermissionRequestCallback() {
+                    @Override
+                    public void onRationaleDialogOkPressed() {
+                        // User has dismissed the dialog, carry on with the request
+                        startPermissionRequest(requestCode);
+                    }
+                });
 
-            // Request permission. It's possible this can be auto-answered if the device policy sets
-            // the permission in a given state or the user denied the request previously and ticked
-            // the "Don't ask again" checkbox.
-            startPermissionRequest(requestCode);
+            } else {
+
+                // Request permission. It's possible this can be auto-answered if the device policy sets
+                // the permission in a given state or the user denied the request previously and ticked
+                // the "Don't ask again" checkbox.
+                startPermissionRequest(requestCode);
+            }
+
         }
-
+        // Fail gracefully if SDK version < 23
     }
 
 

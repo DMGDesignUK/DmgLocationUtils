@@ -5,8 +5,7 @@
 ---
 
 [![](https://jitpack.io/v/DMGDesignUK/DmgLocationUtils.svg)](https://jitpack.io/#DMGDesignUK/DmgLocationUtils)
-[![API](https://img.shields.io/badge/API-16%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=16)
-
+[![API](https://img.shields.io/badge/API-17%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=17)
 
 ### EasyLocationUtility
 
@@ -102,7 +101,7 @@ The following is a very basic example of how you can implement some of the more 
     });
 
     // Get an address element from a location
-    String street = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.STREET_ADDRESS, location);
+    String street = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.STREET_NAME, location);
     String city = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.CITY_NAME, location);
 ```
 

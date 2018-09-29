@@ -1,4 +1,4 @@
-package com.dmgdesignuk.locationutils;
+package com.dmgdesignuk.app;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     public void getAddressElementsFromLocation(Location location){
 
-        String street = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.STREET_ADDRESS, location);
+        String street = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.STREET_NAME, location);
         String city = addressUtility.getAddressElement(EasyAddressUtility.AddressCodes.CITY_NAME, location);
 
         // Best practice is to place all Strings in a String resource xml file as we have done elsewhere, but
