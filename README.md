@@ -62,7 +62,7 @@ Add the following permission in your Androidmanifest.xml file:
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
 
-The following is a very basic example of how you can implement some of the more common use-cases. For more examples have a look at the source code of the [example app](https://github.com/DMGDesignUK/DmgLocationUtils/blob/master/app/src/main/java/com/dmgdesignuk/locationutils/MainActivity.java), which is extensively commented, or read the full Javadoc [here](http://www.dmgdesignuk.com/pages/docs/dmglocationutils/index.html)
+The following is a very basic example of how you can implement some of the more common use-cases. For more examples have a look at the source code of the [example app](https://github.com/DMGDesignUK/DmgLocationUtils/blob/master/app/src/main/java/com/dmgdesignuk/app/MainActivity.java), which is extensively commented, or read the full Javadoc [here](http://www.dmgdesignuk.com/pages/docs/dmglocationutils/index.html)
 ```java
     // Create instances of the utilities
     EasyLocationUtility locationUtility = new EasyLocationUtil(this);
