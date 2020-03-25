@@ -65,8 +65,8 @@ Add the following permission in your Androidmanifest.xml file:
 The following is a very basic example of how you can implement some of the more common use-cases. For more examples have a look at the source code of the [example app](https://github.com/DMGDesignUK/DmgLocationUtils/blob/master/app/src/main/java/com/dmgdesignuk/app/MainActivity.java), which is extensively commented, or read the full Javadoc [here](http://www.dmgdesignuk.com/pages/docs/dmglocationutils/index.html)
 ```java
     // Create instances of the utilities
-    EasyLocationUtility locationUtility = new EasyLocationUtil(this);
-    EasyAddressUtility addressUtility = new EasyAddressUtil(this);
+    EasyLocationUtility locationUtility = new EasyLocationUtility(this);
+    EasyAddressUtility addressUtility = new EasyAddressUtility(this);
 
     // Check if permission to access device location has been granted and ask for it if not
     if (locationUtility.permissionIsGranted()){
@@ -111,7 +111,7 @@ Feedback is an important part of expanding and improving any project. Found a bu
 
 ---
 ### License
-Copyright(c) 2018 Dave Gibbons
+Copyright(c) 2018-2020 Dave Gibbons
 
 [DMgDesignUK](http://www.dmgdesignuk.com/) | dave@dmgdesignuk.com
 
