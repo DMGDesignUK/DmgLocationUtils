@@ -111,7 +111,7 @@ Feedback is an important part of expanding and improving any project. Found a bu
 
 ---
 ### License
-Copyright(c) 2018-2020 Dave Gibbons
+Copyright(c) 2018-2022 Dave Gibbons
 
 [DMgDesignUK](http://www.dmgdesignuk.com/) | dave@dmgdesignuk.com
 
